@@ -1,0 +1,9 @@
+atlas.subs
+atlas.subs.exe
+vendor/
+*.log
+.idea/
+build/
+.vscode/
+*.exe~
+*.txt
