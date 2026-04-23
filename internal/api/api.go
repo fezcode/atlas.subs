@@ -9,6 +9,7 @@ import (
 	"net/url"
 	"os"
 	"path/filepath"
+	"strings"
 )
 
 // Subtitle holds the metadata returned by OpenSubtitles REST API.
@@ -20,6 +21,10 @@ type Subtitle struct {
 }
 
 func Search(query string) ([]Subtitle, error) {
+	// rest.opensubtitles.org 302-redirects any query containing uppercase
+	// letters to a broken URL (host="_"). Lowercase up front to stay on the
+	// working code path.
+	query = strings.ToLower(query)
 	apiURL := fmt.Sprintf("https://rest.opensubtitles.org/search/query-%s", url.PathEscape(query))
 	req, err := http.NewRequest("GET", apiURL, nil)
 	if err != nil {

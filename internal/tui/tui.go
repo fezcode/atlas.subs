@@ -14,6 +14,7 @@ import (
 	"github.com/charmbracelet/lipgloss"
 
 	"github.com/fezcode/atlas.subs/internal/api"
+	"github.com/fezcode/atlas.subs/internal/detect"
 )
 
 type state int
@@ -75,6 +76,7 @@ type model struct {
 	selectedSub     api.Subtitle
 	actionIndex     int
 	actionOptions   []string
+	autoQuery       string
 }
 
 func initialModel() model {
@@ -98,17 +100,28 @@ func initialModel() model {
 
 	vp := viewport.New(0, 0)
 
+	autoQuery := detect.FromCWD()
+	initialState := stateSearch
+	if autoQuery != "" {
+		ti.SetValue(autoQuery)
+		initialState = stateLoading
+	}
+
 	return model{
-		state:         stateSearch,
+		state:         initialState,
 		textInput:     ti,
 		list:          l,
 		spinner:       s,
 		viewport:      vp,
 		actionOptions: []string{"Download", "View"},
+		autoQuery:     autoQuery,
 	}
 }
 
 func (m model) Init() tea.Cmd {
+	if m.autoQuery != "" {
+		return tea.Batch(m.spinner.Tick, searchCmd(m.autoQuery))
+	}
 	return textinput.Blink
 }
 
