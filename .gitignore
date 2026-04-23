@@ -6,4 +6,4 @@ vendor/
 build/
 .vscode/
 *.exe~
-*.txt
+*.txtbash.exe.stackdump
