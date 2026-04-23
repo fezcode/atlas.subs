@@ -23,15 +23,15 @@ func Search(query string) ([]Subtitle, error) {
 	apiURL := fmt.Sprintf("https://rest.opensubtitles.org/search/query-%s", url.PathEscape(query))
 	req, err := http.NewRequest("GET", apiURL, nil)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("query=%q url=%q: %w", query, apiURL, err)
 	}
-	
+
 	req.Header.Set("User-Agent", "TemporaryUserAgent")
 
 	client := &http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("query=%q url=%q: %w", query, apiURL, err)
 	}
 	defer resp.Body.Close()
 
